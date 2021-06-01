@@ -17,15 +17,15 @@ script:
 - bundle exec rake quick
 - gem build sensu-plugins-twilio.gemspec
 - gem install sensu-plugins-twilio-*.gem
+before_deploy:
+- bash -c "[ ! -d bonsai/ ] && git clone https://github.com/sensu/sensu-go-bonsai-asset.git bonsai || echo 'bonsai/ exists, skipping git clone'"
 deploy:
   provider: script
   gem:  bonsai/ruby-runtime/travis-build-ruby-plugin-assets.sh sensu-plugins-twilio
   skip_cleanup: true
   on:
     tags: true
-    banches:
-      only:
-      - master
+    all_branches: true
     rvm: 2.3.0
     rvm: 2.4.1
     rvm: 2.5.1
