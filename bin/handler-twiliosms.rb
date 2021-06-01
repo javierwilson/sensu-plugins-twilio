@@ -126,7 +126,7 @@ class TwilioSMS < Sensu::Handler
           twilio.calls.create(
             twiml: "<Response><Say>#{message}</Say></Response>",
             to: recipient,
-            from: from_number,
+            from: from_number
           )
           puts "Notified #{recipient} for #{action_to_string} via Voice"
 
