@@ -23,7 +23,9 @@ deploy:
   skip_cleanup: true
   on:
     tags: true
-    all_branches: true
+    banches:
+      only:
+      - master
     rvm: 2.3.0
     rvm: 2.4.1
     rvm: 2.5.1
