@@ -4,7 +4,6 @@ cache:
 install:
 - bundle install
 rvm:
-- 2.3.0
 - 2.4.1
 notifications:
   email:
@@ -23,6 +22,6 @@ deploy:
   gem:  bonsai/ruby-runtime/travis-build-ruby-plugin-assets.sh sensu-plugins-twilio
   skip_cleanup: true
   on:
+    tags: true
     all_branches: true
-    rvm: 2.3.0
     rvm: 2.4.1
