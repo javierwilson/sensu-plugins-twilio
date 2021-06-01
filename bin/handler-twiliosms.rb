@@ -121,7 +121,15 @@ class TwilioSMS < Sensu::Handler
             to: recipient,
             body: message
           )
-          puts "Notified #{recipient} for #{action_to_string}"
+          puts "Notified #{recipient} for #{action_to_string} via SMS"
+
+          twilio.calls.create(
+            twiml: "<Response><Say>#{message}</Say></Response>",
+            to: recipient,
+            from: from_number,
+          )
+          puts "Notified #{recipient} for #{action_to_string} via Voice"
+
         rescue StandardError => e
           puts "Failure detected while using Twilio to notify on event: #{e.message}"
         end
