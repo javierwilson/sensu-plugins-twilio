@@ -77,7 +77,7 @@ class TwilioSMS < Sensu::Handler
     account_sid = config[:sid]
     auth_token = config[:token]
     from_number = config[:from_number]
-    candidates = config[:recipients].split(',',-1)
+    candidates = config[:recipients].split(',', -1)
     short = false
     disable_ok = true
 
