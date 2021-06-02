@@ -43,18 +43,11 @@ class TwilioSMS < Sensu::Handler
          short: '-F NUMBER',
          long: '--fromnumber NUMBER'
 
-
   option :recipients,
          description: 'Twilio recipients',
          short: '-r RECIPIENT[,RECIPIENT...]',
          long: '--recipients RECIPIENT[,RECIPIENT...]',
-         proc: proc { |v| v.upcase.split(',') },
-
-  option :disableok,
-         description: 'Disable ok',
-         long: '--disableok',
-         boolean: true,
-         default: true
+         proc: proc { |v| v.upcase.split(',') }
 
     #account_sid = settings['twiliosms']['sid']
     #auth_token = settings['twiliosms']['token']
@@ -114,7 +107,7 @@ class TwilioSMS < Sensu::Handler
     from_number = config[:from_number]
     candidates = config[:recipients]
     short = false
-    disable_ok = config[:disableok]
+    disable_ok = true
 
     return if @event['action'].eql?('resolve') && disable_ok
 
