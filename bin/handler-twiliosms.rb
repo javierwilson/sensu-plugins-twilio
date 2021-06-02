@@ -21,11 +21,48 @@ class TwilioSMS < Sensu::Handler
          long: '--verbose',
          boolean: true,
          default: false
+
   option :disable_send,
          description: 'Disable send',
          long: '--disable_send',
          boolean: true,
          default: false
+
+  option :sid,
+         description: 'Twilio sid'
+         short:       '-S SID',
+         long:        '--sid SID'
+
+  option :token,
+         description: 'Twilio token'
+         short:       '-T TOKEN',
+         long:        '--token TOKEN'
+
+  option :from_number,
+         description: 'Twilio from number'
+         short:       '-F NUMBER',
+         long:        '--fromnumber NUMBER'
+
+
+  option :recipients,
+         description: 'Twilio recipients',
+         short:       '-r RECIPIENT[,RECIPIENT...]',
+         long:        '--recipients RECIPIENT[,RECIPIENT...]',
+         proc:        proc { |v| v.upcase.split(',') },
+
+  option :disableok,
+         description: 'Disable ok',
+         long: '--disableok',
+         boolean: true,
+         default: true
+
+    #account_sid = settings['twiliosms']['sid']
+    #auth_token = settings['twiliosms']['token']
+    #from_number = settings['twiliosms']['number']
+    #candidates = settings['twiliosms']['recipients']
+    #short = settings['twiliosms']['short'] || false
+    #disable_ok = settings['twiliosms']['disableOk'] || false
+
 
   def short_name
     (@event['client']['name'] || 'unknown') + '/' + (@event['check']['name'] || 'unknown')
@@ -50,7 +87,7 @@ class TwilioSMS < Sensu::Handler
 
   def action_to_string
     @event['action'].eql?('resolve') ? 'RESOLVED' : 'ALERT'
-  end
+  endmi
 
   def event_match?(candidate)
     matching = false
@@ -72,12 +109,12 @@ class TwilioSMS < Sensu::Handler
   end
 
   def handle
-    account_sid = settings['twiliosms']['sid']
-    auth_token = settings['twiliosms']['token']
-    from_number = settings['twiliosms']['number']
-    candidates = settings['twiliosms']['recipients']
-    short = settings['twiliosms']['short'] || false
-    disable_ok = settings['twiliosms']['disableOk'] || false
+    account_sid = config[:sid]
+    auth_token = config[:token]
+    from_number = config[:from_number]
+    candidates = config[:recipients]
+    short = false
+    disable_ok = config[:disableok]
 
     return if @event['action'].eql?('resolve') && disable_ok
 
