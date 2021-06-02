@@ -46,8 +46,7 @@ class TwilioSMS < Sensu::Handler
   option :recipients,
          description: 'Twilio recipients',
          short: '-r RECIPIENT[,RECIPIENT...]',
-         long: '--recipients RECIPIENT[,RECIPIENT...]',
-         proc: proc { |v| v.upcase.split(',') }
+         long: '--recipients RECIPIENT[,RECIPIENT...]'
 
   def short_name
     (@event['client']['name'] || 'unknown') + '/' + (@event['check']['name'] || 'unknown')
@@ -74,30 +73,11 @@ class TwilioSMS < Sensu::Handler
     @event['action'].eql?('resolve') ? 'RESOLVED' : 'ALERT'
   end
 
-  def event_match?(candidate)
-    matching = false
-    sensu_role_all = candidate['sensu_roles'].include?('all')
-    puts " sensu_roles includes all: #{sensu_role_all}" if config[:verbose]
-    matching ||= sensu_role_all
-    keepalive_check = @event['check']['name'].eql?('keepalive')
-    sensu_role_keepalive = candidate['sensu_roles'].include?('keepalive')
-    puts " matching keepalive: #{(sensu_role_keepalive && keepalive_check)}" if config[:verbose]
-    matching ||= (sensu_role_keepalive && keepalive_check)
-    matching_subscribers = (@event['check']['subscribers'] &&
-          !(candidate['sensu_roles'] & @event['check']['subscribers']).empty?)
-    matching_subscribers ||= false
-    puts " matching_subscribers: #{matching_subscribers}" if config[:verbose]
-    matching ||= matching_subscribers
-    matching_checkname = candidate['sensu_checks'].include?(check_name)
-    puts " matching_checkname: #{matching_checkname}" if config[:verbose]
-    matching || matching_checkname
-  end
-
   def handle
     account_sid = config[:sid]
     auth_token = config[:token]
     from_number = config[:from_number]
-    candidates = config[:recipients]
+    candidates = config[:recipients].split(',',-1)
     short = false
     disable_ok = true
 
@@ -108,22 +88,7 @@ class TwilioSMS < Sensu::Handler
 
     puts "Check: #{@event['check']}" if config[:verbose]
     puts "Check Status: #{check_status}" if config[:verbose]
-    recipients = []
-    candidates.each do |mobile, candidate|
-      puts "Mobile: #{mobile} Config:#{candidate}" if config[:verbose]
-
-      ##
-      # Match event subsciption and/or check name using event_match? method
-      #  and require requested level  <= check_status:
-      #    sensu_level == 0  Matches all status
-      #    sensu_level == 1  Matches warnings+critical+unknown
-      #    sensu_level == 2  Matches critical+unknown
-      #    sensu_level == 3  Matches unknown
-      next unless event_match?(candidate) && (candidate['sensu_level'] <= check_status)
-
-      puts "Send text to: #{mobile}" if config[:verbose]
-      recipients << mobile
-    end
+    recipients = candidates
     message = if short
                 "Sensu #{action_to_string}: #{output}"
               else
