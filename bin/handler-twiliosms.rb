@@ -49,14 +49,6 @@ class TwilioSMS < Sensu::Handler
          long: '--recipients RECIPIENT[,RECIPIENT...]',
          proc: proc { |v| v.upcase.split(',') }
 
-    #account_sid = settings['twiliosms']['sid']
-    #auth_token = settings['twiliosms']['token']
-    #from_number = settings['twiliosms']['number']
-    #candidates = settings['twiliosms']['recipients']
-    #short = settings['twiliosms']['short'] || false
-    #disable_ok = settings['twiliosms']['disableOk'] || false
-
-
   def short_name
     (@event['client']['name'] || 'unknown') + '/' + (@event['check']['name'] || 'unknown')
   end
@@ -80,7 +72,7 @@ class TwilioSMS < Sensu::Handler
 
   def action_to_string
     @event['action'].eql?('resolve') ? 'RESOLVED' : 'ALERT'
-  endmi
+  end
 
   def event_match?(candidate)
     matching = false
