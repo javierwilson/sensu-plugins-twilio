@@ -29,26 +29,26 @@ class TwilioSMS < Sensu::Handler
          default: false
 
   option :sid,
-         description: 'Twilio sid'
-         short:       '-S SID',
-         long:        '--sid SID'
+         description: 'Twilio sid',
+         short: '-S SID',
+         long: '--sid SID'
 
   option :token,
-         description: 'Twilio token'
-         short:       '-T TOKEN',
-         long:        '--token TOKEN'
+         description: 'Twilio token',
+         short: '-T TOKEN',
+         long: '--token TOKEN'
 
   option :from_number,
-         description: 'Twilio from number'
-         short:       '-F NUMBER',
-         long:        '--fromnumber NUMBER'
+         description: 'Twilio from number',
+         short: '-F NUMBER',
+         long: '--fromnumber NUMBER'
 
 
   option :recipients,
          description: 'Twilio recipients',
-         short:       '-r RECIPIENT[,RECIPIENT...]',
-         long:        '--recipients RECIPIENT[,RECIPIENT...]',
-         proc:        proc { |v| v.upcase.split(',') },
+         short: '-r RECIPIENT[,RECIPIENT...]',
+         long: '--recipients RECIPIENT[,RECIPIENT...]',
+         proc: proc { |v| v.upcase.split(',') },
 
   option :disableok,
          description: 'Disable ok',
