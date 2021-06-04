@@ -121,7 +121,7 @@ class TwilioSMS < Sensu::Handler
     message = if short
                 "Sensu Shrt #{action_to_string}: #{output}"
               else
-                "Sensu #{action_to_string} #{check_name} Status #{check_status} on #{client} #{output}"
+                "Sensu #{action_to_string} #{check_name} Status #{check_status} on #{client} #{output}."
               end
 
     message[157..message.length] = '...' if message.length > 160
