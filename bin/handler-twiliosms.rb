@@ -86,7 +86,7 @@ class TwilioSMS < Sensu::Handler
   end
 
   def recipients
-    uri = URI(config[:url])
+    uri = URI(config[:url].to_s)
     Net::HTTP.start(
       uri.host, uri.port,
       use_ssl: uri.scheme == 'https',
