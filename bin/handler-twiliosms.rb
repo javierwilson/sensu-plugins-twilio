@@ -60,7 +60,6 @@ class TwilioSMS < Sensu::Handler
          short: '-p PASSWORD',
          long: '--password PASSWORD'
 
-
   def short_name
     (@event['client']['name'] || 'unknown') + '/' + (@event['check']['name'] || 'unknown')
   end
@@ -86,15 +85,17 @@ class TwilioSMS < Sensu::Handler
     @event['action'].eql?('resolve') ? 'RESOLVED' : 'ALERT'
   end
 
-  def get_recipients
-    uri = URI(config[:url]config[:url])
-    Net::HTTP.start(uri.host, uri.port,
-      :use_ssl => uri.scheme == 'https',
-      :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |http|
+  def recipients
+    uri = URI(config[:url])
+    Net::HTTP.start(
+      uri.host, uri.port,
+      use_ssl: uri.scheme == 'https',
+      verify_mode: OpenSSL::SSL::VERIFY_NONE
+    ) do |http|
       request = Net::HTTP::Get.new uri.request_uri
       request.basic_auth config[:user], config[:password]
       response = http.request request # Net::HTTPResponse object
-      recipients = JSON.parse(response.body)["current_on_call"]
+      JSON.parse(response.body)['current_on_call']
     end
   end
 
@@ -102,7 +103,7 @@ class TwilioSMS < Sensu::Handler
     account_sid = config[:sid]
     auth_token = config[:token]
     from_number = config[:from_number]
-    candidates = get_recipients
+    candidates = recipients
     short = false
     disable_ok = true
 
