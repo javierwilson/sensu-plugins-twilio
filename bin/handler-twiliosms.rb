@@ -13,6 +13,8 @@ require 'sensu-handler'
 require 'twilio-ruby'
 require 'rest-client'
 require 'json'
+require 'net/http'
+require 'openssl'
 
 class TwilioSMS < Sensu::Handler
   option :verbose,
@@ -43,10 +45,21 @@ class TwilioSMS < Sensu::Handler
          short: '-F NUMBER',
          long: '--fromnumber NUMBER'
 
-  option :recipients,
-         description: 'Twilio recipients',
-         short: '-r RECIPIENT[,RECIPIENT...]',
-         long: '--recipients RECIPIENT[,RECIPIENT...]'
+  option :url,
+         description: 'Recipients url',
+         short: '-ur URL',
+         long: '--url URL'
+
+  option :user,
+         description: 'Recipinets url user',
+         short: '-u USER',
+         long: '--user USER'
+
+  option :password,
+         description: 'Recipinets url password',
+         short: '-p PASSWORD',
+         long: '--password PASSWORD'
+
 
   def short_name
     (@event['client']['name'] || 'unknown') + '/' + (@event['check']['name'] || 'unknown')
@@ -73,11 +86,23 @@ class TwilioSMS < Sensu::Handler
     @event['action'].eql?('resolve') ? 'RESOLVED' : 'ALERT'
   end
 
+  def get_recipients
+    uri = URI(config[:url]config[:url])
+    Net::HTTP.start(uri.host, uri.port,
+      :use_ssl => uri.scheme == 'https',
+      :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |http|
+      request = Net::HTTP::Get.new uri.request_uri
+      request.basic_auth config[:user], config[:password]
+      response = http.request request # Net::HTTPResponse object
+      recipients = JSON.parse(response.body)["current_on_call"]
+    end
+  end
+
   def handle
     account_sid = config[:sid]
     auth_token = config[:token]
     from_number = config[:from_number]
-    candidates = config[:recipients].split(',', -1)
+    candidates = get_recipients
     short = false
     disable_ok = true
 
@@ -89,10 +114,12 @@ class TwilioSMS < Sensu::Handler
     puts "Check: #{@event['check']}" if config[:verbose]
     puts "Check Status: #{check_status}" if config[:verbose]
     recipients = candidates
+    source = @event['check']['source'] || @event['client']['name']
+    incident_id = [source, @event['check']['name']].join('  ')
     message = if short
-                "Sensu #{action_to_string}: #{output}"
+                "Sensu Shrt #{action_to_string}: #{output}"
               else
-                "Sensu #{action_to_string}: Status: #{check_status} :: #{short_name} (#{address}) #{output}"
+                "Sensu #{action_to_string} Status #{check_status} on #{incident_id}"
               end
 
     message[157..message.length] = '...' if message.length > 160
