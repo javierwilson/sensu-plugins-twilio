@@ -116,7 +116,7 @@ class TwilioSMS < Sensu::Handler
     puts "Check Status: #{check_status}" if config[:verbose]
     recipients = candidates
     check_name = @event['check']['name'] || 'unknown'
-    client = @event['client']['name'] || 'unknown'
+    client = @event['check']['entity']['name'] || 'unknown'
     message = if short
                 "Sensu Shrt #{action_to_string}: #{output}"
               else
