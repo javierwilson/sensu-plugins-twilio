@@ -117,10 +117,11 @@ class TwilioSMS < Sensu::Handler
     recipients = candidates
     check_name = @event['check']['name'] || 'unknown'
     client = @event['check']['entity']['name'] || 'unknown'
+    client2 = @event['entity']['name'] || 'unknown'
     message = if short
                 "Sensu Shrt #{action_to_string}: #{output}"
               else
-                "Sensu #{action_to_string} #{check_name} Status #{check_status} on #{client} #{output}."
+                "Sensu #{action_to_string} #{check_name} Status #{check_status} on #{client} #{client2} #{output}."
               end
 
     message[157..message.length] = '...' if message.length > 160
