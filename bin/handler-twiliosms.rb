@@ -111,6 +111,7 @@ class TwilioSMS < Sensu::Handler
 
     raise 'Please define a valid Twilio authentication set to use this handler' unless account_sid && auth_token && from_number
     raise 'Please define a valid set of SMS recipients to use this handler' if candidates.nil? || candidates.empty?
+
     recipients = candidates
     check_name = @event['check']['name'] || @event['check']['metadata']['name']
     hostname = @event['entity']['system']['hostname'] || 'unknown'
@@ -120,7 +121,6 @@ class TwilioSMS < Sensu::Handler
                 "Sensu #{action_to_string} #{check_name} Status #{check_status} on #{hostname} #{output}"
               end
     message[157..message.length] = '...' if message.length > 160
-
 
     twilio = Twilio::REST::Client.new(account_sid, auth_token)
     recipients.each do |recipient|
