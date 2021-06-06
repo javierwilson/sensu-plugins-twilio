@@ -113,7 +113,7 @@ class TwilioSMS < Sensu::Handler
     raise 'Please define a valid set of SMS recipients to use this handler' if candidates.nil? || candidates.empty?
     recipients = candidates
     check_name = @event['check']['name'] || @event['check']['metadata']['name']
-    hostname = @event["entity"]['system']["hostname"] || 'unknown'
+    hostname = @event['entity']['system']['hostname'] || 'unknown'
     message = if short
                 "Sensu Shrt #{action_to_string}: #{output}"
               else
