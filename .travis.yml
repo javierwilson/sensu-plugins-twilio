@@ -11,8 +11,6 @@ before_install:
   - bundle _1.17.3_ install
 install:
 - bundle install
-rvm:
-- 3.0.2
 notifications:
   email:
     recipients:
@@ -33,4 +31,3 @@ deploy:
   on:
     tags: true
     all_branches: true
-    rvm: 3.0.2
