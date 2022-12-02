@@ -1,5 +1,6 @@
 language: ruby
 services: docker
+dist: jammy
 arch:
   - amd64
   - arm64
@@ -28,6 +29,7 @@ deploy:
   provider: script
   script:  bonsai/ruby-runtime/travis-build-ruby-plugin-assets.sh sensu-plugins-twilio
   skip_cleanup: true
+  github_token: $GITHUB_TOKEN
   on:
     tags: true
     all_branches: true
