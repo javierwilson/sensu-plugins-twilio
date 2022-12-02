@@ -1,5 +1,8 @@
 language: ruby
 services: docker
+arch:
+  - amd64
+  - arm64
 cache:
 - bundler
 before_install:
