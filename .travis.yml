@@ -12,7 +12,7 @@ rvm:
 notifications:
   email:
     recipients:
-    - alfonso.delgado@viamo.io
+    - javier.wilson@viamo.io
     on_success: change
     on_failure: always
 script:
